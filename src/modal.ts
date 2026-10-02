@@ -2,7 +2,7 @@ import * as electron from "electron";
 const fs = require("fs").promises;
 import { type FrontMatterCache, Modal, TFile, TFolder } from "obsidian";
 import path from "path";
-import { mount, unmount } from "svelte";
+import { mount, unmount, type Component } from "svelte";
 import i18n, { type Lang } from "./i18n";
 import type BetterExportPdfPlugin from "./main";
 import { renderMarkdown, type ParamType } from "./render";
@@ -34,7 +34,15 @@ export interface ExportConfigType {
   multiple?: boolean;
 }
 
-export type DocType = { doc: Document | HTMLDivElement; frontMatter?: FrontMatterCache; file: TFile };
+export type DocType = {
+  doc: Document | HTMLDivElement;
+  frontMatter?: FrontMatterCache;
+  file: TFile;
+  printSize?: string;
+};
+
+type Mounted<C> = C extends Component<infer _P, infer Exports, infer _B> ? Exports : never;
+
 export type DocV2Type = {
   doc: HTMLDivElement;
   frontMatter: FrontMatterCache;
@@ -55,8 +63,8 @@ export class ExportConfigModal extends Modal {
 
   i18n: Lang;
 
-  // Svelte component instance
-  private component?: ModalUI;
+  // Svelte 5 `mount()` returns the component exports, not the component type
+  private component?: Mounted<typeof ModalUI>;
 
   constructor(plugin: BetterExportPdfPlugin, file: TFile | TFolder, multiplePdf?: boolean) {
     super(plugin.app);
@@ -183,13 +191,14 @@ export class ExportConfigModal extends Modal {
 
   mergeDoc(docs: DocType[]) {
     const { doc: doc0, frontMatter, file } = docs[0];
-    const sections = [];
+    const owner = doc0 instanceof Document ? doc0 : (doc0.ownerDocument ?? document);
+    const sections: HTMLElement[] = [];
     for (const { doc } of docs) {
       const element = doc.querySelector(".markdown-preview-view");
       if (element) {
-        const section = doc0.createElement("section");
+        const section = owner.createElement("section");
         Array.from(element.children).forEach((child) => {
-          section.appendChild(doc0.importNode(child, true));
+          section.appendChild(owner.importNode(child, true));
         });
         sections.push(section);
       }

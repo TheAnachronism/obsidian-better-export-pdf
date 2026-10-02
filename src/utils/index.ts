@@ -6,7 +6,7 @@ export class TreeNode {
   title: string;
   level: number;
   children: TreeNode[] = [];
-  parent: TreeNode;
+  parent?: TreeNode;
   constructor(key: string, title: string, level: number) {
     this.key = key;
     this.title = title;
@@ -25,11 +25,11 @@ export class TreeNode {
  */
 
 export function getHeadingTree(doc: Document | HTMLDivElement = document) {
-  const headings = doc.querySelectorAll("h1, h2, h3, h4, h5, h6");
+  const headings = doc.querySelectorAll<HTMLHeadingElement>("h1, h2, h3, h4, h5, h6");
   const root = new TreeNode("", "Root", 0);
   let prev = root;
 
-  headings.forEach((heading: HTMLElement) => {
+  headings.forEach((heading) => {
     if (heading.style.display == "none") {
       return;
     }
@@ -43,7 +43,11 @@ export function getHeadingTree(doc: Document | HTMLDivElement = document) {
     const newNode = new TreeNode(regexMatch[1], heading.innerText, level);
 
     while (prev.level >= level) {
-      prev = prev.parent;
+      const parent = prev.parent;
+      if (!parent) {
+        break;
+      }
+      prev = parent;
     }
     // 保证 prev.level < level, 即 prev 是 curr 的父节点
     prev.children.push(newNode);
@@ -58,7 +62,7 @@ export function getHeadingTree(doc: Document | HTMLDivElement = document) {
 // Enhanced to support both Obsidian wikilinks and standard markdown anchor links
 export function modifyDest(doc: Document | HTMLDivElement) {
   const data = new Map();
-  doc.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((heading: HTMLElement, i) => {
+  doc.querySelectorAll<HTMLHeadingElement>("h1, h2, h3, h4, h5, h6").forEach((heading, i) => {
     const link = document.createElement("a") as HTMLAnchorElement;
     const flag = `${heading.tagName.toLowerCase()}-${i}`;
     link.href = `af://${flag}`;
@@ -106,7 +110,7 @@ export function fixAnchors(doc: Document | HTMLDivElement, dest: Map<string, str
   const lowerDest = convertMapKeysToLowercase(dest);
 
   // Handle Obsidian internal links (wikilink-style)
-  doc.querySelectorAll("a.internal-link").forEach((el: HTMLAnchorElement, i) => {
+  doc.querySelectorAll<HTMLAnchorElement>("a.internal-link").forEach((el, i) => {
     const [title, anchor] = el.dataset.href?.split("#") ?? [];
 
     if (anchor?.startsWith("^")) {
@@ -126,7 +130,7 @@ export function fixAnchors(doc: Document | HTMLDivElement, dest: Map<string, str
   });
 
   // Handle standard markdown anchor links like [text](#heading)
-  doc.querySelectorAll("a[href^='#']").forEach((el: HTMLAnchorElement) => {
+  doc.querySelectorAll<HTMLAnchorElement>("a[href^='#']").forEach((el) => {
     const href = el.getAttribute("href");
     if (!href) return;
 
@@ -247,6 +251,10 @@ export function safeParseFloat(str?: string, default_ = 0.0) {
   }
 }
 
+function isCSSStyleRule(rule: CSSRule): rule is CSSStyleRule {
+  return rule.type === CSSRule.STYLE_RULE;
+}
+
 /**
  * 获取在暗色主题中定义，但在亮色主题中缺失重构的衍生变量公式
  * @returns {Object} 缺失的衍生变量键值对，例如: { "--table-header-color": "var(--text-normal)" }
@@ -262,7 +270,7 @@ export function getDerivedLightVars() {
         if (!rules) continue;
 
         for (const rule of rules) {
-          if (rule.type !== CSSRule.STYLE_RULE) continue;
+          if (!isCSSStyleRule(rule)) continue;
 
           const selector = rule.selectorText;
 

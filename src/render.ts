@@ -207,7 +207,7 @@ export async function renderMarkdown({ app, file, config, extra }: ParamType) {
 
   const fragment = {
     children: undefined,
-    appendChild(e: DocumentFragment) {
+    appendChild(this: { children?: HTMLCollection }, e: DocumentFragment) {
       this.children = e?.children;
       throw new Error("exit");
     },
@@ -252,7 +252,7 @@ export async function renderMarkdown({ app, file, config, extra }: ParamType) {
   });
   await Promise.all(promises);
 
-  printEl.findAll("a.internal-link").forEach((el: HTMLAnchorElement) => {
+  printEl.findAll("a.internal-link").forEach((el) => {
     const [title, anchor] = el.dataset.href?.split("#") ?? [];
 
     if ((!title || title?.length == 0 || title == file.basename) && anchor?.startsWith("^")) {
@@ -390,7 +390,7 @@ async function renderHtml({
 }) {
   const fragment = {
     children: undefined,
-    appendChild(e: DocumentFragment) {
+    appendChild(this: { children?: HTMLCollection }, e: DocumentFragment) {
       this.children = e?.children;
       throw new Error("exit");
     },
@@ -435,7 +435,7 @@ async function renderHtml({
   });
   await Promise.all(promises);
 
-  viewEl.findAll("a.internal-link").forEach((el: HTMLAnchorElement) => {
+  viewEl.findAll("a.internal-link").forEach((el) => {
     const [title, anchor] = el.dataset.href?.split("#") ?? [];
 
     if ((!title || title?.length == 0 || title == file.basename) && anchor?.startsWith("^")) {
@@ -460,8 +460,8 @@ export function fixDocV2(doc: Document | HTMLDivElement, title: string) {
 }
 
 export function encodeEmbeds(doc: Document) {
-  const spans = Array.from(doc.querySelectorAll("span.markdown-embed")).reverse();
-  spans.forEach((span: HTMLElement) => (span.innerHTML = encodeURIComponent(span.innerHTML)));
+  const spans = Array.from(doc.querySelectorAll<HTMLSpanElement>("span.markdown-embed")).reverse();
+  spans.forEach((span) => (span.innerHTML = encodeURIComponent(span.innerHTML)));
 }
 
 export async function fixWaitRender(data: string, viewEl: HTMLElement) {

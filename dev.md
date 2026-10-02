@@ -80,7 +80,7 @@ pnpm dev
 
 The shell sets `ELECTRON_SKIP_BINARY_DOWNLOAD=1`: Obsidian supplies the Electron runtime. Dependencies are installed explicitly, not when entering the shell.
 
-Run a command without an interactive shell with `nix develop --command pnpm build`. The build includes typechecking; existing type errors must be resolved for that command to pass.
+Run a production build without an interactive shell with `nix develop --command pnpm build`. This runs TypeScript checking before bundling `main.js`. Check Svelte component types separately with `nix develop --command pnpm exec svelte-check`.
 
 Without Nix:
 
