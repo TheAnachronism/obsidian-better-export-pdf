@@ -65,6 +65,14 @@ Document level header/footer templates can also be configured in frontMatter:
 - `headerTemplate`
 - `footerTemplate`
 
+Use `{{property}}` to insert a note's frontmatter properties into either template. For example, a note with `author: Hein Gromek` can use:
+
+```html
+<div style="width: 100%;font-size:10px;text-align:center;">{{author}}</div>
+```
+
+PDF preview and export use the properties of the note being printed, including its `headerTemplate` and `footerTemplate` overrides. Separate PDFs use each note's own properties; a merged PDF uses the first note's properties. This is separate from PDF metadata and Electron's built-in classes such as `pageNumber`.
+
 ### Customize the export style
 
 If you want to further customize the PDF export style, you can add custom CSS in the `Appearance > CSS Snippet`, such as custom fonts and sizes:

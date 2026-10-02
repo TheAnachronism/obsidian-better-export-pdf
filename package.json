@@ -8,6 +8,7 @@
     "dev:vite": "vite build --watch --mode development",
     "build:vite": "vite build",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "node --test --conditions=browser --import ./test/register.mjs test/*.test.mjs",
     "version": "node version-bump.mjs && git add manifest.json versions.json"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
     "esbuild": "0.28.0",
     "esbuild-svelte": "^0.9.5",
     "eslint": "^8.57.0",
+    "happy-dom": "^20.14.5",
     "obsidian": "^1.12.3",
     "svelte": "^5.56.2",
     "svelte-check": "^4.6.0",

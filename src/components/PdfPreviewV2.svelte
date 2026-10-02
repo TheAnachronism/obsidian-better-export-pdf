@@ -43,7 +43,6 @@
   let pdfCaches = $state<Record<string, string[]>>({});
   let preConfig = $state.snapshot(config);
 
-  const printOptions = $derived(makePrintOptions({ ...settings, ...config }));
   const pageSizeCalc = new PageSizeCalculator(config);
 
   export function calcPageSize() {
@@ -145,12 +144,15 @@
     outputFile,
     title,
     onlyPreview = false,
+    frontMatter,
   }: {
     el: HTMLDivElement;
     outputFile: string;
     title: string;
     onlyPreview?: boolean;
+    frontMatter?: DocType["frontMatter"];
   }) {
+    const printOptions = makePrintOptions({ ...settings, ...config }, frontMatter);
     console.debug("printOptions:", printOptions);
     const pdfOptions = {
       ...printOptions,
@@ -181,7 +183,7 @@
 
     data = await editPDF(data, {
       headings: getHeadingTree(el as unknown as Document),
-      frontMatter: docs[0].frontMatter,
+      frontMatter,
       displayMetadata: settings?.displayMetadata,
       maxLevel: safeParseInt(settings?.maxLevel, 6),
     });
@@ -214,12 +216,12 @@
     });
 
     for (const [i, outfile] of outfiles.entries()) {
-      const { doc, file } = docs[i] as { doc: HTMLDivElement; file: TFile };
+      const { doc, file, frontMatter } = docs[i] as DocType & { doc: HTMLDivElement };
       const title = file.basename;
       doc.style.display = "block";
       await sleep(200);
 
-      await exportToPDF({ el: doc, outputFile: outfile, title, onlyPreview });
+      await exportToPDF({ el: doc, outputFile: outfile, title, onlyPreview, frontMatter });
       doc.style.display = "none";
       if (cb) {
         await cb(outfile);

@@ -66,6 +66,14 @@ Better Export PDF 是一个 Obsidian PDF 导出增强插件，与官方的 PDF �
 - `headerTemplate`
 - `footerTemplate`
 
+在模板中使用 `{{property}}` 可以插入笔记的 frontmatter 属性。例如，笔记包含 `author: Hein Gromek` 时，可以使用：
+
+```html
+<div style="width: 100%;font-size:10px;text-align:center;">{{author}}</div>
+```
+
+PDF 预览和导出使用当前打印笔记的属性，包括该笔记的 `headerTemplate` 和 `footerTemplate` 配置。分别导出 PDF 时使用各笔记自己的属性；合并导出时使用第一篇笔记的属性。这与 PDF 元数据及 Electron 内置的 `pageNumber` 等类不同。
+
 ### 自定义导出样式
 
 如果想进一步定制 PDF 导出样式，可以在`外观>CSS代码片段`中添加自定义的 CSS，例如自定义字体和字号(注意使用 `@media print {}` 包裹，避免影响非打印场景样式)：
