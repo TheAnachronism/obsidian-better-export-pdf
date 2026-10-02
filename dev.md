@@ -70,8 +70,23 @@ t.postProcess = function(e, t) {
 
 ## Development
 
+With Nix installed, enter the pinned Node.js/pnpm development shell:
+
 ```bash
-set ELECTRON_SKIP_BINARY_DOWNLOAD=1 && pnpm i
+nix develop
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+The shell sets `ELECTRON_SKIP_BINARY_DOWNLOAD=1`: Obsidian supplies the Electron runtime. Dependencies are installed explicitly, not when entering the shell.
+
+Run a command without an interactive shell with `nix develop --command pnpm build`. The build includes typechecking; existing type errors must be resolved for that command to pass.
+
+Without Nix:
+
+```bash
+ELECTRON_SKIP_BINARY_DOWNLOAD=1 pnpm install --frozen-lockfile
+pnpm dev
 ```
 
 ```
