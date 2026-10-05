@@ -60,6 +60,8 @@ It can be any HTML fragment, such as adding a base64 image:
 </div>
 ```
 
+Use `{{property}}` in either template to insert a note's frontmatter property, for example `<span>{{author}}</span>`. Missing or null properties render as empty text; values such as `0` and `false` are preserved.
+
 Document level header/footer templates can also be configured in frontMatter:
 
 - `headerTemplate`
