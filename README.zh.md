@@ -61,7 +61,7 @@ Better Export PDF 是一个 Obsidian PDF 导出增强插件，与官方的 PDF �
 </div>
 ```
 
-在页眉或页脚模板中使用 `{{property}}` 可以插入笔记的 frontmatter 属性，例如 `<span>{{author}}</span>`。缺失或为 null 的属性显示为空文本；`0` 和 `false` 等值会保留。预览/导出版本 2 会用每篇被导出笔记自己的 frontmatter 填充这些占位符，批量/多 PDF 导出也是如此。
+在页眉或页脚模板中使用 `{{property}}` 可以插入笔记的 frontmatter 属性，例如 `<span>{{author}}</span>`。缺失或为 null 的属性显示为空文本；`0` 和 `false` 等值会保留。属性值中的 wikilink 会显示为纯文本（`[[Name]]` 显示为 `Name`，`[[note|Display name]]` 显示为 `Display name`）；数组仍以逗号分隔显示。预览/导出版本 2 会用每篇被导出笔记自己的 frontmatter 填充这些占位符，批量/多 PDF 导出也是如此。
 
 可以在`frontMatter`中配置文档级别的页眉/页脚模板：
 

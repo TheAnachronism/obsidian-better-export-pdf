@@ -144,14 +144,12 @@
     outputFile,
     title,
     onlyPreview = false,
-    printOptions,
     frontMatter,
   }: {
     el: HTMLDivElement;
     outputFile: string;
     title: string;
     onlyPreview?: boolean;
-    printOptions: electron.PrintToPDFOptions;
     frontMatter?: DocType["frontMatter"];
   }) {
     const printOptions = makePrintOptions({ ...settings, ...config }, frontMatter);
@@ -224,11 +222,10 @@
         frontMatter?: DocType["frontMatter"];
       };
       const title = file.basename;
-      const printOptions = makePrintOptions({ ...settings, ...config }, frontMatter);
       doc.style.display = "block";
       await sleep(200);
 
-      await exportToPDF({ el: doc, outputFile: outfile, title, onlyPreview, printOptions, frontMatter });
+      await exportToPDF({ el: doc, outputFile: outfile, title, onlyPreview, frontMatter });
       doc.style.display = "none";
       if (cb) {
         await cb(outfile);

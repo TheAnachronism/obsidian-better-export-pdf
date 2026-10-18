@@ -48,3 +48,20 @@ test("nullish properties render empty without discarding present values", () => 
     "|||0|false|Ada",
   );
 });
+test("frontmatter wikilinks render as their visible text", () => {
+  assert.equal(
+    renderTemplate("{{author}}", { author: "author: [[Name]], [[second-person]]" }),
+    "author: Name, second-person",
+  );
+});
+test("frontmatter property values retain coercion while normalizing links", () => {
+  assert.equal(
+    renderTemplate("{{alias}}|{{tags}}|{{brackets}}|{{malformed}}", {
+      alias: "[[internal-name|Display name]]",
+      tags: ["[[first]]", "[[second|Second name]]"],
+      brackets: "[text] and [[complete]]",
+      malformed: "[[unfinished",
+    }),
+    "Display name|first,Second name|[text] and complete|[[unfinished",
+  );
+});
