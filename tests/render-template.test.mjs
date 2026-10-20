@@ -54,6 +54,15 @@ test("frontmatter wikilinks render as their visible text", () => {
     "author: Name, second-person",
   );
 });
+test("frontmatter lists use comma-space separators", () => {
+  assert.equal(
+    renderTemplate("{{links}}|{{names}}", {
+      links: ["[[asdf]]", "[[asdfasdf]]"],
+      names: ["Ada", "Grace"],
+    }),
+    "asdf, asdfasdf|Ada, Grace",
+  );
+});
 test("frontmatter property values retain coercion while normalizing links", () => {
   assert.equal(
     renderTemplate("{{alias}}|{{tags}}|{{brackets}}|{{malformed}}", {
@@ -62,6 +71,6 @@ test("frontmatter property values retain coercion while normalizing links", () =
       brackets: "[text] and [[complete]]",
       malformed: "[[unfinished",
     }),
-    "Display name|first,Second name|[text] and complete|[[unfinished",
+    "Display name|first, Second name|[text] and complete|[[unfinished",
   );
 });

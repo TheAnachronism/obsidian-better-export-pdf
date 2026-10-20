@@ -227,11 +227,11 @@ export function copyAttributes(node: HTMLElement, attributes: NamedNodeMap) {
 }
 
 export function renderTemplate(tpl: string, data: Record<string, string>) {
-  return tpl.replace(/\{\{(.*?)\}\}/g, (match, key) =>
-    (data[key.trim()] ?? "")
-      .toString()
-      .replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, target, alias) => alias ?? target),
-  );
+  return tpl.replace(/\{\{(.*?)\}\}/g, (match, key) => {
+    const value = data[key.trim()] ?? "";
+    return (Array.isArray(value) ? value.join(", ") : value.toString())
+      .replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, target, alias) => alias ?? target);
+  });
 }
 
 export function isNumber(str: string) {
